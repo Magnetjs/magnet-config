@@ -10,6 +10,7 @@ export default {
     port: 3000
   },
 
+  // Experimenting
   paths: {
     base,
     client: `${base}/client`,

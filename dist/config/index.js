@@ -11,6 +11,11 @@ exports.default = {
     name: 'magnet-app'
   },
 
+  server: {
+    port: 3000
+  },
+
+  // Experimenting
   paths: {
     base: base,
     client: base + '/client',
@@ -30,9 +35,5 @@ exports.default = {
       view: serverPath + '/views',
       acl: serverPath + '/acl'
     }
-  },
-
-  server: {
-    port: 3000
   }
 };
