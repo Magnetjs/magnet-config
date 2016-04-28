@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/Magnetjs/magnet-config.svg?branch=master)](https://travis-ci.org/Magnetjs/magnet-config)
 
+# What it does
+Compose all js files under server/config and expose it via app.config.
+
 # Config structure
 ```
 {
@@ -8,8 +11,8 @@
   },
 
   env: {
-    dev: !process.env.NODE_ENV || process.env.NODE_ENV === 'development',
-    prod: process.env.NODE_ENV && process.env.NODE_ENV === 'production',
+    dev: (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') || false,
+    prod: (process.env.NODE_ENV && process.env.NODE_ENV === 'production') || false,
   },
 
   server: {
@@ -41,3 +44,6 @@ let app = await magnet([
 ]);
 console.log(app.config.app.name); // magnet-app
 ```
+
+### Todo
+1. Explore [node-config](https://github.com/lorenwest/node-config) can be use together.

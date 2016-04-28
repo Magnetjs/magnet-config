@@ -11,6 +11,11 @@ exports.default = {
     name: 'magnet-app'
   },
 
+  env: {
+    dev: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' || false,
+    prod: process.env.NODE_ENV && process.env.NODE_ENV === 'production' || false
+  },
+
   server: {
     port: 3000
   },
