@@ -6,7 +6,7 @@ export default class Config extends Base {
   async setup() {
     try {
       // Get user's config
-      let paths = this.options.paths || ['/server/config', '/isomorphic/config'];
+      let paths = this.options.paths || ['/server/config'];
       let prepareConfigs = [];
       if (paths && Array.isArray(paths)) {
         for (let path of paths) {
@@ -27,6 +27,7 @@ export default class Config extends Base {
     try {
       config = requireAll(configPath);
     } catch (err) {
+      consoleTrace(err);
       return {};
     }
 
@@ -44,8 +45,24 @@ export default class Config extends Base {
 
       return config;
     } catch (err) {
-      console.error(err);
+      consoleError(err);
       return {};
+    }
+  }
+
+  consoleTrace(err) {
+    if (this.app.log) {
+      this.app.log.trace(err);
+    } else {
+      console.trace(err);
+    }
+  }
+
+  consoleError(err) {
+    if (this.app.log) {
+      this.app.log.error(err);
+    } else {
+      console.error(err);
     }
   }
 }

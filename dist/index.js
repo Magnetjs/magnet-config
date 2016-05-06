@@ -52,7 +52,7 @@ var Config = function (_Base) {
                 _context.prev = 0;
 
                 // Get user's config
-                paths = this.options.paths || ['/server/config', '/isomorphic/config'];
+                paths = this.options.paths || ['/server/config'];
                 prepareConfigs = [];
 
                 if (!(paths && Array.isArray(paths))) {
@@ -147,16 +147,18 @@ var Config = function (_Base) {
                 _context2.prev = 1;
 
                 config = (0, _requireAll2.default)(configPath);
-                _context2.next = 8;
+                _context2.next = 9;
                 break;
 
               case 5:
                 _context2.prev = 5;
                 _context2.t0 = _context2['catch'](1);
+
+                consoleTrace(_context2.t0);
                 return _context2.abrupt('return', {});
 
-              case 8:
-                _context2.prev = 8;
+              case 9:
+                _context2.prev = 9;
 
                 for (conf in config) {
                   if (config.hasOwnProperty(conf) && conf !== 'index') {
@@ -171,19 +173,19 @@ var Config = function (_Base) {
 
                 return _context2.abrupt('return', config);
 
-              case 13:
-                _context2.prev = 13;
-                _context2.t1 = _context2['catch'](8);
+              case 14:
+                _context2.prev = 14;
+                _context2.t1 = _context2['catch'](9);
 
-                console.error(_context2.t1);
+                consoleError(_context2.t1);
                 return _context2.abrupt('return', {});
 
-              case 17:
+              case 18:
               case 'end':
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[1, 5], [8, 13]]);
+        }, _callee2, this, [[1, 5], [9, 14]]);
       }));
 
       function setupConfig(_x) {
@@ -192,6 +194,24 @@ var Config = function (_Base) {
 
       return setupConfig;
     }()
+  }, {
+    key: 'consoleTrace',
+    value: function consoleTrace(err) {
+      if (this.app.log) {
+        this.app.log.trace(err);
+      } else {
+        console.trace(err);
+      }
+    }
+  }, {
+    key: 'consoleError',
+    value: function consoleError(err) {
+      if (this.app.log) {
+        this.app.log.error(err);
+      } else {
+        console.error(err);
+      }
+    }
   }]);
 
   return Config;
