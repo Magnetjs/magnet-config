@@ -27,7 +27,7 @@ export default class Config extends Base {
     try {
       config = requireAll(configPath);
     } catch (err) {
-      consoleTrace(err);
+      this.consoleTrace(err);
       return {};
     }
 
@@ -45,7 +45,7 @@ export default class Config extends Base {
 
       return config;
     } catch (err) {
-      consoleError(err);
+      this.consoleError(err);
       return {};
     }
   }
