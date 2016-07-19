@@ -166,12 +166,11 @@ var Config = function (_Base) {
 
                 for (conf in config) {
                   if (config.hasOwnProperty(conf) && conf !== 'index') {
-                    conf = (0, _camelCase2.default)(conf);
                     // To support es2015 module
                     if (config[conf].default) {
-                      config[conf] = config[conf].default;
+                      config[(0, _camelCase2.default)(conf)] = config[conf].default;
                     } else {
-                      config[conf] = config[conf];
+                      config[(0, _camelCase2.default)(conf)] = config[conf];
                     }
                   }
                 }

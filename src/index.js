@@ -35,12 +35,11 @@ export default class Config extends Base {
     try {
       for (let conf in config) {
         if (config.hasOwnProperty(conf) && conf !== 'index') {
-          conf = camelCase(conf);
           // To support es2015 module
           if (config[conf].default) {
-            config[conf] = config[conf].default;
+            config[camelCase(conf)] = config[conf].default;
           } else {
-            config[conf] = config[conf];
+            config[camelCase(conf)] = config[conf];
           }
         }
       }
