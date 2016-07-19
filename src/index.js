@@ -1,5 +1,6 @@
 import Base from 'magnet-core/dist/base';
 import requireAll from 'require-all';
+import camelCase from 'lodash/camelCase';
 import defaultConfig from './config/index.js';
 
 export default class Config extends Base {
@@ -34,6 +35,7 @@ export default class Config extends Base {
     try {
       for (let conf in config) {
         if (config.hasOwnProperty(conf) && conf !== 'index') {
+          conf = camelCase(conf);
           // To support es2015 module
           if (config[conf].default) {
             config[conf] = config[conf].default;

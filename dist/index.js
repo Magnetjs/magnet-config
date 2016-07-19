@@ -14,6 +14,10 @@ var _requireAll = require('require-all');
 
 var _requireAll2 = _interopRequireDefault(_requireAll);
 
+var _camelCase = require('lodash/camelCase');
+
+var _camelCase2 = _interopRequireDefault(_camelCase);
+
 var _index = require('./config/index.js');
 
 var _index2 = _interopRequireDefault(_index);
@@ -154,7 +158,7 @@ var Config = function (_Base) {
                 _context2.prev = 5;
                 _context2.t0 = _context2['catch'](1);
 
-                consoleTrace(_context2.t0);
+                this.consoleTrace(_context2.t0);
                 return _context2.abrupt('return', {});
 
               case 9:
@@ -162,6 +166,7 @@ var Config = function (_Base) {
 
                 for (conf in config) {
                   if (config.hasOwnProperty(conf) && conf !== 'index') {
+                    conf = (0, _camelCase2.default)(conf);
                     // To support es2015 module
                     if (config[conf].default) {
                       config[conf] = config[conf].default;
@@ -177,7 +182,7 @@ var Config = function (_Base) {
                 _context2.prev = 14;
                 _context2.t1 = _context2['catch'](9);
 
-                consoleError(_context2.t1);
+                this.consoleError(_context2.t1);
                 return _context2.abrupt('return', {});
 
               case 18:
