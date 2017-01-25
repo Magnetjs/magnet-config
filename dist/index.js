@@ -26,7 +26,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { return step("next", value); }, function (err) { return step("throw", err); }); } } return step("next"); }); }; }
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -40,13 +40,13 @@ var Config = function (_Base) {
   function Config() {
     _classCallCheck(this, Config);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Config).apply(this, arguments));
+    return _possibleConstructorReturn(this, (Config.__proto__ || Object.getPrototypeOf(Config)).apply(this, arguments));
   }
 
   _createClass(Config, [{
     key: 'setup',
     value: function () {
-      var ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
+      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
         var paths, prepareConfigs, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, path, configs;
 
         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -133,7 +133,7 @@ var Config = function (_Base) {
       }));
 
       function setup() {
-        return ref.apply(this, arguments);
+        return _ref.apply(this, arguments);
       }
 
       return setup;
@@ -141,7 +141,7 @@ var Config = function (_Base) {
   }, {
     key: 'setupConfig',
     value: function () {
-      var ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(configPath) {
+      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(configPath) {
         var config, conf;
         return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
@@ -193,7 +193,7 @@ var Config = function (_Base) {
       }));
 
       function setupConfig(_x) {
-        return ref.apply(this, arguments);
+        return _ref2.apply(this, arguments);
       }
 
       return setupConfig;
