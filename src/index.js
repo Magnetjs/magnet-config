@@ -1,4 +1,4 @@
-import Base from 'magnet-core/dist/base';
+import Base from 'magnet-core/base';
 import requireAll from 'require-all';
 import camelCase from 'lodash/camelCase';
 import defaultConfig from './config/index.js';
