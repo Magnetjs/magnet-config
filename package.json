@@ -1,6 +1,6 @@
 {
   "name": "magnet-config",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Readme",
   "keywords": [
     "config",
@@ -24,6 +24,7 @@
     "build": "npm run clean && npm run build-index",
     "build-index": "babel src -d dist",
     "clean": "rm -rf dist && mkdir dist",
+    "dist": "npm run build && npm publish",
     "start": "babel src --out-dir dist",
     "test": "ava | tap-spec",
     "watch": "nodemon --ignore dist --exec \"babel src\" --out-dir dist",
@@ -52,12 +53,12 @@
   },
   "dependencies": {
     "lodash": "^4.13.1",
-    "magnet-config": "^3.2.2",
+    "magnet-core": "^3.3.0",
     "require-all": "^2.0.0"
   },
   "devDependencies": {
     "ava": "^0.18.1",
-    "babel-cli": "^6.7.7",
+    "babel-cli": "^6.23.0",
     "babel-preset-env": "^1.1.8",
     "concurrently": "^3.3.0",
     "fast-async": "^6.2.0",
