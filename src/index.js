@@ -1,35 +1,35 @@
-import Base from 'magnet-core/base';
-import requireAll from 'require-all';
-import camelCase from 'lodash/camelCase';
-import defaultConfig from './config/index.js';
+import Base from 'magnet-core/base'
+import requireAll from 'require-all'
+import camelCase from 'lodash/camelCase'
+import defaultConfig from './config/index.js'
 
 export default class Config extends Base {
-  async setup() {
+  async setup () {
     try {
       // Get user's config
-      let paths = this.options.paths || ['/server/config'];
-      let prepareConfigs = [];
+      let paths = this.options.paths || ['/dist/server/config']
+      let prepareConfigs = []
       if (paths && Array.isArray(paths)) {
         for (let path of paths) {
-          prepareConfigs.push(this.setupConfig(process.cwd() + path));
+          prepareConfigs.push(this.setupConfig(process.cwd() + path))
         }
       }
-      let configs = await Promise.all(prepareConfigs);
+      let configs = await Promise.all(prepareConfigs)
 
-      this.app.config = Object.assign({}, defaultConfig, ...configs);
+      this.app.config = Object.assign({}, defaultConfig, ...configs)
     } catch (err) {
-      throw err;
+      throw err
     }
   }
 
-  async setupConfig(configPath) {
-    let config = {};
+  async setupConfig (configPath) {
+    let config = {}
 
     try {
-      config = requireAll(configPath);
+      config = requireAll(configPath)
     } catch (err) {
-      this.consoleTrace(err);
-      return {};
+      this.consoleTrace(err)
+      return {}
     }
 
     try {
@@ -37,33 +37,33 @@ export default class Config extends Base {
         if (config.hasOwnProperty(conf) && conf !== 'index') {
           // To support es2015 module
           if (config[conf].default) {
-            config[camelCase(conf)] = config[conf].default;
+            config[camelCase(conf)] = config[conf].default
           } else {
-            config[camelCase(conf)] = config[conf];
+            config[camelCase(conf)] = config[conf]
           }
         }
       }
 
-      return config;
+      return config
     } catch (err) {
-      this.consoleError(err);
-      return {};
+      this.consoleError(err)
+      return {}
     }
   }
 
-  consoleTrace(err) {
+  consoleTrace (err) {
     if (this.app.log) {
-      this.app.log.trace(err);
+      this.app.log.trace(err)
     } else {
-      console.trace(err);
+      console.trace(err)
     }
   }
 
-  consoleError(err) {
+  consoleError (err) {
     if (this.app.log) {
-      this.app.log.error(err);
+      this.app.log.error(err)
     } else {
-      console.error(err);
+      console.error(err)
     }
   }
 }

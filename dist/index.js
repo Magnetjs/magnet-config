@@ -4,9 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _base = require('magnet-core/dist/base');
+var _base = require('magnet-core/base');
 
 var _base2 = _interopRequireDefault(_base);
 
@@ -24,201 +22,362 @@ var _index2 = _interopRequireDefault(_index);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+Function.prototype.$asyncbind = function $asyncbind(self, catcher) {
+  "use strict";
+
+  if (!Function.prototype.$asyncbind) {
+    Object.defineProperty(Function.prototype, "$asyncbind", {
+      value: $asyncbind,
+      enumerable: false,
+      configurable: true,
+      writable: true
+    });
+  }
+
+  if (!$asyncbind.trampoline) {
+    $asyncbind.trampoline = function trampoline(t, x, s, e, u) {
+      return function b(q) {
+        while (q) {
+          if (q.then) {
+            q = q.then(b, e);
+            return u ? undefined : q;
+          }
+
+          try {
+            if (q.pop) {
+              if (q.length) return q.pop() ? x.call(t) : q;
+              q = s;
+            } else q = q.call(t);
+          } catch (r) {
+            return e(r);
+          }
+        }
+      };
+    };
+  }
+
+  if (!$asyncbind.LazyThenable) {
+    $asyncbind.LazyThenable = function () {
+      function isThenable(obj) {
+        return obj && obj instanceof Object && typeof obj.then === "function";
+      }
+
+      function resolution(p, r, how) {
+        try {
+          var x = how ? how(r) : r;
+          if (p === x) return p.reject(new TypeError("Promise resolution loop"));
+
+          if (isThenable(x)) {
+            x.then(function (y) {
+              resolution(p, y);
+            }, function (e) {
+              p.reject(e);
+            });
+          } else {
+            p.resolve(x);
+          }
+        } catch (ex) {
+          p.reject(ex);
+        }
+      }
+
+      function Chained() {}
+
+      ;
+      Chained.prototype = {
+        resolve: _unchained,
+        reject: _unchained,
+        then: thenChain
+      };
+
+      function _unchained(v) {}
+
+      function thenChain(res, rej) {
+        this.resolve = res;
+        this.reject = rej;
+      }
+
+      function then(res, rej) {
+        var chain = new Chained();
+
+        try {
+          this._resolver(function (value) {
+            return isThenable(value) ? value.then(res, rej) : resolution(chain, value, res);
+          }, function (ex) {
+            resolution(chain, ex, rej);
+          });
+        } catch (ex) {
+          resolution(chain, ex, rej);
+        }
+
+        return chain;
+      }
+
+      function Thenable(resolver) {
+        this._resolver = resolver;
+        this.then = then;
+      }
+
+      ;
+
+      Thenable.resolve = function (v) {
+        return Thenable.isThenable(v) ? v : {
+          then: function (resolve) {
+            return resolve(v);
+          }
+        };
+      };
+
+      Thenable.isThenable = isThenable;
+      return Thenable;
+    }();
+
+    $asyncbind.EagerThenable = $asyncbind.Thenable = ($asyncbind.EagerThenableFactory = function (tick) {
+      tick = tick || typeof process === "object" && process.nextTick || typeof setImmediate === "function" && setImmediate || function (f) {
+        setTimeout(f, 0);
+      };
+
+      var soon = function () {
+        var fq = [],
+            fqStart = 0,
+            bufferSize = 1024;
+
+        function callQueue() {
+          while (fq.length - fqStart) {
+            fq[fqStart]();
+            fq[fqStart++] = undefined;
+
+            if (fqStart === bufferSize) {
+              fq.splice(0, bufferSize);
+              fqStart = 0;
+            }
+          }
+        }
+
+        return function (fn) {
+          fq.push(fn);
+          if (fq.length - fqStart === 1) tick(callQueue);
+        };
+      }();
+
+      function Zousan(func) {
+        if (func) {
+          var me = this;
+          func(function (arg) {
+            me.resolve(arg);
+          }, function (arg) {
+            me.reject(arg);
+          });
+        }
+      }
+
+      Zousan.prototype = {
+        resolve: function (value) {
+          if (this.state !== undefined) return;
+          if (value === this) return this.reject(new TypeError("Attempt to resolve promise with self"));
+          var me = this;
+
+          if (value && (typeof value === "function" || typeof value === "object")) {
+            try {
+              var first = 0;
+              var then = value.then;
+
+              if (typeof then === "function") {
+                then.call(value, function (ra) {
+                  if (!first++) {
+                    me.resolve(ra);
+                  }
+                }, function (rr) {
+                  if (!first++) {
+                    me.reject(rr);
+                  }
+                });
+                return;
+              }
+            } catch (e) {
+              if (!first) this.reject(e);
+              return;
+            }
+          }
+
+          this.state = STATE_FULFILLED;
+          this.v = value;
+          if (me.c) soon(function () {
+            for (var n = 0, l = me.c.length; n < l; n++) STATE_FULFILLED(me.c[n], value);
+          });
+        },
+        reject: function (reason) {
+          if (this.state !== undefined) return;
+          this.state = STATE_REJECTED;
+          this.v = reason;
+          var clients = this.c;
+          if (clients) soon(function () {
+            for (var n = 0, l = clients.length; n < l; n++) STATE_REJECTED(clients[n], reason);
+          });
+        },
+        then: function (onF, onR) {
+          var p = new Zousan();
+          var client = {
+            y: onF,
+            n: onR,
+            p: p
+          };
+
+          if (this.state === undefined) {
+            if (this.c) this.c.push(client);else this.c = [client];
+          } else {
+            var s = this.state,
+                a = this.v;
+            soon(function () {
+              s(client, a);
+            });
+          }
+
+          return p;
+        }
+      };
+
+      function STATE_FULFILLED(c, arg) {
+        if (typeof c.y === "function") {
+          try {
+            var yret = c.y.call(undefined, arg);
+            c.p.resolve(yret);
+          } catch (err) {
+            c.p.reject(err);
+          }
+        } else c.p.resolve(arg);
+      }
+
+      function STATE_REJECTED(c, reason) {
+        if (typeof c.n === "function") {
+          try {
+            var yret = c.n.call(undefined, reason);
+            c.p.resolve(yret);
+          } catch (err) {
+            c.p.reject(err);
+          }
+        } else c.p.reject(reason);
+      }
+
+      Zousan.resolve = function (val) {
+        if (val && val instanceof Zousan) return val;
+        var z = new Zousan();
+        z.resolve(val);
+        return z;
+      };
+
+      Zousan.reject = function (err) {
+        if (err && err instanceof Zousan) return err;
+        var z = new Zousan();
+        z.reject(err);
+        return z;
+      };
+
+      Zousan.version = "2.3.2-nodent";
+      return Zousan;
+    })();
+  }
+
+  var resolver = this;
+
+  switch (catcher) {
+    case true:
+      return new $asyncbind.Thenable(boundThen);
+
+    case 0:
+      return new $asyncbind.LazyThenable(boundThen);
+
+    case undefined:
+      boundThen.then = boundThen;
+      return boundThen;
+
+    default:
+      return function () {
+        try {
+          return resolver.apply(self, arguments);
+        } catch (ex) {
+          return catcher(ex);
+        }
+      };
+  }
+
+  function boundThen() {
+    return resolver.apply(self, arguments);
+  }
+};
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+class Config extends _base2.default {
+  setup() {
+    var _this = this;
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+    return _asyncToGenerator(function* () {
+      try {
+        // Get user's config
+        let paths = _this.options.paths || ['/dist/server/config'];
+        let prepareConfigs = [];
+        if (paths && Array.isArray(paths)) {
+          for (let path of paths) {
+            prepareConfigs.push(_this.setupConfig(process.cwd() + path));
+          }
+        }
+        let configs = yield Promise.all(prepareConfigs);
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Config = function (_Base) {
-  _inherits(Config, _Base);
-
-  function Config() {
-    _classCallCheck(this, Config);
-
-    return _possibleConstructorReturn(this, (Config.__proto__ || Object.getPrototypeOf(Config)).apply(this, arguments));
+        _this.app.config = Object.assign({}, _index2.default, ...configs);
+      } catch (err) {
+        throw err;
+      }
+    })();
   }
 
-  _createClass(Config, [{
-    key: 'setup',
-    value: function () {
-      var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee() {
-        var paths, prepareConfigs, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, path, configs;
+  setupConfig(configPath) {
+    var _this2 = this;
 
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.prev = 0;
+    return _asyncToGenerator(function* () {
+      let config = {};
 
-                // Get user's config
-                paths = this.options.paths || ['/server/config'];
-                prepareConfigs = [];
+      try {
+        config = (0, _requireAll2.default)(configPath);
+      } catch (err) {
+        _this2.consoleTrace(err);
+        return {};
+      }
 
-                if (!(paths && Array.isArray(paths))) {
-                  _context.next = 23;
-                  break;
-                }
-
-                _iteratorNormalCompletion = true;
-                _didIteratorError = false;
-                _iteratorError = undefined;
-                _context.prev = 7;
-
-                for (_iterator = paths[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  path = _step.value;
-
-                  prepareConfigs.push(this.setupConfig(process.cwd() + path));
-                }
-                _context.next = 15;
-                break;
-
-              case 11:
-                _context.prev = 11;
-                _context.t0 = _context['catch'](7);
-                _didIteratorError = true;
-                _iteratorError = _context.t0;
-
-              case 15:
-                _context.prev = 15;
-                _context.prev = 16;
-
-                if (!_iteratorNormalCompletion && _iterator.return) {
-                  _iterator.return();
-                }
-
-              case 18:
-                _context.prev = 18;
-
-                if (!_didIteratorError) {
-                  _context.next = 21;
-                  break;
-                }
-
-                throw _iteratorError;
-
-              case 21:
-                return _context.finish(18);
-
-              case 22:
-                return _context.finish(15);
-
-              case 23:
-                _context.next = 25;
-                return Promise.all(prepareConfigs);
-
-              case 25:
-                configs = _context.sent;
-
-
-                this.app.config = Object.assign.apply(Object, [{}, _index2.default].concat(_toConsumableArray(configs)));
-                _context.next = 32;
-                break;
-
-              case 29:
-                _context.prev = 29;
-                _context.t1 = _context['catch'](0);
-                throw _context.t1;
-
-              case 32:
-              case 'end':
-                return _context.stop();
+      try {
+        for (let conf in config) {
+          if (config.hasOwnProperty(conf) && conf !== 'index') {
+            // To support es2015 module
+            if (config[conf].default) {
+              config[(0, _camelCase2.default)(conf)] = config[conf].default;
+            } else {
+              config[(0, _camelCase2.default)(conf)] = config[conf];
             }
           }
-        }, _callee, this, [[0, 29], [7, 11, 15, 23], [16,, 18, 22]]);
-      }));
+        }
 
-      function setup() {
-        return _ref.apply(this, arguments);
+        return config;
+      } catch (err) {
+        _this2.consoleError(err);
+        return {};
       }
+    })();
+  }
 
-      return setup;
-    }()
-  }, {
-    key: 'setupConfig',
-    value: function () {
-      var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(configPath) {
-        var config, conf;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                config = {};
-                _context2.prev = 1;
-
-                config = (0, _requireAll2.default)(configPath);
-                _context2.next = 9;
-                break;
-
-              case 5:
-                _context2.prev = 5;
-                _context2.t0 = _context2['catch'](1);
-
-                this.consoleTrace(_context2.t0);
-                return _context2.abrupt('return', {});
-
-              case 9:
-                _context2.prev = 9;
-
-                for (conf in config) {
-                  if (config.hasOwnProperty(conf) && conf !== 'index') {
-                    // To support es2015 module
-                    if (config[conf].default) {
-                      config[(0, _camelCase2.default)(conf)] = config[conf].default;
-                    } else {
-                      config[(0, _camelCase2.default)(conf)] = config[conf];
-                    }
-                  }
-                }
-
-                return _context2.abrupt('return', config);
-
-              case 14:
-                _context2.prev = 14;
-                _context2.t1 = _context2['catch'](9);
-
-                this.consoleError(_context2.t1);
-                return _context2.abrupt('return', {});
-
-              case 18:
-              case 'end':
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this, [[1, 5], [9, 14]]);
-      }));
-
-      function setupConfig(_x) {
-        return _ref2.apply(this, arguments);
-      }
-
-      return setupConfig;
-    }()
-  }, {
-    key: 'consoleTrace',
-    value: function consoleTrace(err) {
-      if (this.app.log) {
-        this.app.log.trace(err);
-      } else {
-        console.trace(err);
-      }
+  consoleTrace(err) {
+    if (this.app.log) {
+      this.app.log.trace(err);
+    } else {
+      console.trace(err);
     }
-  }, {
-    key: 'consoleError',
-    value: function consoleError(err) {
-      if (this.app.log) {
-        this.app.log.error(err);
-      } else {
-        console.error(err);
-      }
+  }
+
+  consoleError(err) {
+    if (this.app.log) {
+      this.app.log.error(err);
+    } else {
+      console.error(err);
     }
-  }]);
-
-  return Config;
-}(_base2.default);
-
+  }
+}
 exports.default = Config;
