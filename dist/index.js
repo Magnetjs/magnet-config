@@ -16,9 +16,17 @@ var _camelCase = require('lodash/camelCase');
 
 var _camelCase2 = _interopRequireDefault(_camelCase);
 
-var _index = require('./config/index.js');
+var _isFunction = require('lodash/isFunction');
 
-var _index2 = _interopRequireDefault(_index);
+var _isFunction2 = _interopRequireDefault(_isFunction);
+
+var _entries = require('lodash/entries');
+
+var _entries2 = _interopRequireDefault(_entries);
+
+var _app = require('./config/app.js');
+
+var _app2 = _interopRequireDefault(_app);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -315,16 +323,20 @@ class Config extends _base2.default {
     return _asyncToGenerator(function* () {
       try {
         // Get user's config
-        let paths = _this.options.paths || ['/dist/server/config'];
+        let paths = _this.options.paths || ['/server/config'];
         let prepareConfigs = [];
+
+        _this.app.config = _app2.default;
+
         if (paths && Array.isArray(paths)) {
           for (let path of paths) {
             prepareConfigs.push(_this.setupConfig(process.cwd() + path));
           }
         }
+
         let configs = yield Promise.all(prepareConfigs);
 
-        _this.app.config = Object.assign({}, _index2.default, ...configs);
+        _this.app.config = Object.assign(_app2.default, ...configs);
       } catch (err) {
         throw err;
       }
@@ -345,15 +357,12 @@ class Config extends _base2.default {
       }
 
       try {
-        for (let conf in config) {
-          if (config.hasOwnProperty(conf) && conf !== 'index') {
-            // To support es2015 module
-            if (config[conf].default) {
-              config[(0, _camelCase2.default)(conf)] = config[conf].default;
-            } else {
-              config[(0, _camelCase2.default)(conf)] = config[conf];
-            }
-          }
+        for (let [key, conf] of (0, _entries2.default)(config)) {
+          if (key === 'index') continue;
+
+          conf = conf.default || conf;
+
+          config[(0, _camelCase2.default)(key)] = (0, _isFunction2.default)(conf) ? conf(_this2.app) : conf;
         }
 
         return config;
