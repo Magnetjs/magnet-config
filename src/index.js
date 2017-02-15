@@ -1,22 +1,28 @@
 import Base from 'magnet-core/base'
 import requireAll from 'require-all'
 import camelCase from 'lodash/camelCase'
-import defaultConfig from './config/index.js'
+import isFunction from 'lodash/isFunction'
+import entries from 'lodash/entries'
+import defaultConfig from './config/app.js'
 
 export default class Config extends Base {
   async setup () {
     try {
       // Get user's config
-      let paths = this.options.paths || ['/dist/server/config']
+      let paths = this.options.paths || ['/server/config']
       let prepareConfigs = []
+
+      this.app.config = defaultConfig
+
       if (paths && Array.isArray(paths)) {
         for (let path of paths) {
           prepareConfigs.push(this.setupConfig(process.cwd() + path))
         }
       }
+
       let configs = await Promise.all(prepareConfigs)
 
-      this.app.config = Object.assign({}, defaultConfig, ...configs)
+      this.app.config = Object.assign(defaultConfig, ...configs)
     } catch (err) {
       throw err
     }
@@ -33,15 +39,12 @@ export default class Config extends Base {
     }
 
     try {
-      for (let conf in config) {
-        if (config.hasOwnProperty(conf) && conf !== 'index') {
-          // To support es2015 module
-          if (config[conf].default) {
-            config[camelCase(conf)] = config[conf].default
-          } else {
-            config[camelCase(conf)] = config[conf]
-          }
-        }
+      for (let [key, conf] of entries(config)) {
+        if (key === 'index') continue
+
+        conf = conf.default || conf
+
+        config[camelCase(key)] = isFunction(conf) ? conf(this.app) : conf
       }
 
       return config
