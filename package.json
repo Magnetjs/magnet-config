@@ -40,7 +40,7 @@
     "magnet-core": "^3.3.1",
     "mz": "^2.6.0",
     "require-all": "^2.0.0",
-    "typescript": "^2.1.6"
+    "typescript": "^2.2.1"
   },
   "devDependencies": {
     "ava": "^0.18.1",
