@@ -7,23 +7,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 const module_1 = require("magnet-core/module");
 const fs = require("mz/fs");
 const requireAll = require("require-all");
 const camelCase = require("lodash/camelCase");
 const isFunction = require("lodash/isFunction");
 const entries = require("lodash/entries");
-const app_js_1 = require("./config/app.js");
-class Config extends module_1.Module {
+const config_js_1 = require("./config/config.js");
+class MagnetConfig extends module_1.Module {
     setup() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                // Get user's config
-                // let path: string[] = this.options.dirPath || defaultConfig
-                this.app.config = Object.assign(app_js_1.default, this.options);
-                const config = yield this.setupConfig(process.cwd() + this.app.config.dirPath);
-                this.app.config = Object.assign(app_js_1.default, config);
+                this.app.config = Object.assign(config_js_1.default, this.options);
+                const config = yield this.setupConfig(this.app.config.baseDirPath + this.app.config.configDirPath);
+                this.app.config = Object.assign(config_js_1.default, config);
             }
             catch (err) {
                 throw err;
@@ -62,5 +59,6 @@ class Config extends module_1.Module {
         });
     }
 }
-exports.default = Config;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = MagnetConfig;
 //# sourceMappingURL=index.js.map

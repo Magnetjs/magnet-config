@@ -5,17 +5,28 @@ import camelCase = require('lodash/camelCase')
 import isFunction = require('lodash/isFunction')
 import entries = require('lodash/entries')
 
-import defaultConfig from './config/app.js'
+import defaultConfig from './config/config.js'
 
-export default class Config extends Module {
+export interface Config {
+  baseDirPath: string
+  configDirPath: string
+  env: {
+    dev: boolean
+    test: boolean
+    stag: boolean
+    prod: boolean
+  }
+  [propName: string]: any
+}
+
+export default class MagnetConfig extends Module {
   async setup () {
     try {
-      // Get user's config
-      // let path: string[] = this.options.dirPath || defaultConfig
-
       this.app.config = Object.assign(defaultConfig, this.options)
 
-      const config: any = await this.setupConfig(process.cwd() + this.app.config.dirPath)
+      const config: any = await this.setupConfig(
+        this.app.config.baseDirPath + this.app.config.configDirPath
+      )
 
       this.app.config = Object.assign(defaultConfig, config)
     } catch (err) {
