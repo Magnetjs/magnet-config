@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 const module_1 = require("magnet-core/module");
 const fs = require("mz/fs");
 const requireAll = require("require-all");
@@ -59,6 +60,5 @@ class MagnetConfig extends module_1.Module {
         });
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = MagnetConfig;
 //# sourceMappingURL=index.js.map
