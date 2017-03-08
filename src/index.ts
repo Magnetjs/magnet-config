@@ -1,9 +1,10 @@
 import { Module } from 'magnet-core/module'
 import * as fs from 'mz/fs'
 import * as requireAll from 'require-all'
-import camelCase = require('lodash/camelCase')
-import isFunction = require('lodash/isFunction')
-import entries = require('lodash/entries')
+import * as isPromise from 'is-promise'
+import * as camelCase from 'lodash/camelCase'
+import * as isFunction from 'lodash/isFunction'
+import * as entries from 'lodash/entries'
 
 import defaultConfig from './config/config.js'
 
@@ -44,7 +45,7 @@ export default class MagnetConfig extends Module {
       if (err.code === 'ENOENT') {
         this.log.warn(err)
       } else {
-        this.log.trace(err)
+        this.log.error(err)
       }
 
       return {}
@@ -56,12 +57,19 @@ export default class MagnetConfig extends Module {
 
         conf = conf.default || conf
 
-        config[camelCase(key)] = isFunction(conf) ? conf(this.app) : conf
+        if (isFunction(conf)) {
+          config[camelCase(key)] = isFunction(conf) ? conf(this.app) : conf
+          if (isPromise(config[camelCase(key)])) {
+            config[camelCase(key)] = await config[camelCase(key)]
+          }
+        } else {
+          config[camelCase(key)] = conf
+        }
       }
 
       return config
     } catch (err) {
-      this.log.error(err)
+      this.app.log.error(err)
       return {}
     }
   }
