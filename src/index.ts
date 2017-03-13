@@ -2,9 +2,9 @@ import { Module } from 'magnet-core/module'
 import * as fs from 'mz/fs'
 import * as requireAll from 'require-all'
 import * as isPromise from 'is-promise'
-import * as camelCase from 'lodash/camelCase'
-import * as isFunction from 'lodash/isFunction'
 import * as entries from 'lodash/entries'
+import camelCase = require('lodash/camelCase')
+import isFunction = require('lodash/isFunction')
 
 import defaultConfig from './config/config.js'
 
@@ -57,16 +57,18 @@ export default class MagnetConfig extends Module {
 
         conf = conf.default || conf
 
+        key = key.replace('-', '_')
+
         if (isFunction(conf)) {
-          config[camelCase(key)] = isFunction(conf) ? conf(this.app) : conf
-          if (isPromise(config[camelCase(key)])) {
-            config[camelCase(key)] = await config[camelCase(key)]
+          config[key] = conf(this.app)
+
+          if (isPromise(config[key])) {
+            config[key] = await config[key]
           }
         } else {
-          config[camelCase(key)] = conf
+          config[key] = conf
         }
       }
-
       return config
     } catch (err) {
       this.app.log.error(err)
