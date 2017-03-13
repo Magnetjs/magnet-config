@@ -12,9 +12,8 @@ const module_1 = require("magnet-core/module");
 const fs = require("mz/fs");
 const requireAll = require("require-all");
 const isPromise = require("is-promise");
-const camelCase = require("lodash/camelCase");
-const isFunction = require("lodash/isFunction");
 const entries = require("lodash/entries");
+const isFunction = require("lodash/isFunction");
 const config_js_1 = require("./config/config.js");
 class MagnetConfig extends module_1.Module {
     setup() {
@@ -50,14 +49,15 @@ class MagnetConfig extends module_1.Module {
                     if (key === 'index')
                         continue;
                     conf = conf.default || conf;
+                    key = key.replace('-', '_');
                     if (isFunction(conf)) {
-                        config[camelCase(key)] = isFunction(conf) ? conf(this.app) : conf;
-                        if (isPromise(config[camelCase(key)])) {
-                            config[camelCase(key)] = yield config[camelCase(key)];
+                        config[key] = conf(this.app);
+                        if (isPromise(config[key])) {
+                            config[key] = yield config[key];
                         }
                     }
                     else {
-                        config[camelCase(key)] = conf;
+                        config[key] = conf;
                     }
                 }
                 return config;
