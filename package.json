@@ -34,7 +34,7 @@
     "bluebird": "^3.4.7",
     "is-promise": "^2.1.0",
     "lodash": "^4.13.1",
-    "magnet-core": "^3.3.1",
+    "magnet-core": "^3.7.2",
     "mz": "^2.6.0",
     "require-all": "^2.0.0",
     "typescript": "^2.1.6"
