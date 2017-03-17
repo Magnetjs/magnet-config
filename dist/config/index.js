@@ -10,4 +10,4 @@ exports.default = {
         prod: (process.env.NODE_ENV && process.env.NODE_ENV === 'production') || false
     }
 };
-//# sourceMappingURL=config.js.map
+//# sourceMappingURL=index.js.map

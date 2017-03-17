@@ -6,7 +6,7 @@ import * as entries from 'lodash/entries'
 import camelCase = require('lodash/camelCase')
 import isFunction = require('lodash/isFunction')
 
-import defaultConfig from './config/config.js'
+import defaultConfig from './config/index.js'
 
 export interface Config {
   baseDirPath: string
