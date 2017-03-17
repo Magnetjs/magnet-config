@@ -1,6 +1,6 @@
 {
   "name": "magnet-config",
-  "version": "1.19.1",
+  "version": "1.20.0",
   "description": "Readme",
   "keywords": [
     "config",
@@ -13,19 +13,14 @@
   },
   "license": "MIT",
   "author": "Kieve Chua <kievechua@gmail.com> (https://github.com/kievechua)",
-  "main": "dist/index.js",
-  "types": "dist/index.d.js",
+  "main": "index.js",
+  "types": "index.d.js",
   "repository": "magnetjs/magnet-config",
   "scripts": {
     "build": "fly build",
     "start": "fly",
     "dist": "npm run build && cd dist && npm publish",
     "test": "ava | tap-spec",
-    "build:index": "node_modules/.bin/tsc",
-    "clean-lib": "node_modules/.bin/rimraf ./dist",
-    "copy-package": "cp -rf package.json LICENSE README.md dist",
-    "watch": "tsc -w",
-    "watch-all": "concurrently \"npm run watch\" \"npm run watch-test\"",
     "watch-test": "ava --watch | tap-spec"
   },
   "dependencies": {
