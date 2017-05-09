@@ -14,14 +14,14 @@ const requireAll = require("require-all");
 const isPromise = require("is-promise");
 const entries = require("lodash/entries");
 const isFunction = require("lodash/isFunction");
-const index_js_1 = require("./config/index.js");
+const index_1 = require("./config/index");
 class MagnetConfig extends module_1.Module {
     setup() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                this.app.config = Object.assign(index_js_1.default, this.options);
+                this.app.config = Object.assign(index_1.default, this.options);
                 const config = yield this.setupConfig(this.app.config.baseDirPath + this.app.config.configDirPath);
-                this.app.config = Object.assign(index_js_1.default, config);
+                this.app.config = Object.assign(index_1.default, config);
             }
             catch (err) {
                 throw err;
