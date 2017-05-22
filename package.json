@@ -39,7 +39,7 @@
     "fly-flatten": "^1.0.1",
     "fly-typescript": "^1.0.0",
     "fly-watch": "^1.1.1",
-    "typescript": "^2.3.2"
+    "typescript": "2.3.2"
   },
   "engines": {
     "node": ">=6.9.5"
