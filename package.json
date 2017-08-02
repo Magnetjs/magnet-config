@@ -19,7 +19,7 @@
   "scripts": {
     "build": "fly build",
     "start": "fly",
-    "dist": "tsc && cd dist && npm publish",
+    "dist": "npm run build && tsc && cd dist && npm publish",
     "test": "ava | tap-spec",
     "watch-test": "ava --watch | tap-spec"
   },
