@@ -1,6 +1,6 @@
 {
   "name": "magnet-config",
-  "version": "1.21.0",
+  "version": "1.22.0",
   "description": "Readme",
   "keywords": [
     "config",
@@ -19,7 +19,7 @@
   "scripts": {
     "build": "fly build",
     "start": "fly",
-    "dist": "npm run build && cd dist && npm publish",
+    "dist": "npm run build && tsc && cd dist && npm publish",
     "test": "ava | tap-spec",
     "watch-test": "ava --watch | tap-spec"
   },
@@ -38,7 +38,8 @@
     "fly-esnext": "^2.0.1",
     "fly-flatten": "^1.0.1",
     "fly-typescript": "^1.0.0",
-    "fly-watch": "^1.1.1"
+    "fly-watch": "^1.1.1",
+    "typescript": "^2.3.2"
   },
   "engines": {
     "node": ">=6.9.5"

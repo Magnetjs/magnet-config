@@ -47,3 +47,4 @@ console.log(app.config.app.name); // magnet-app
 
 ### Todo
 1. Explore [node-config](https://github.com/lorenwest/node-config) can be use together.
+- Support ts file
