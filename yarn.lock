@@ -1683,7 +1683,12 @@ lodash.isequal@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
 
-lodash@^4.13.1, lodash@^4.17.4, lodash@^4.2.0:
+lodash@^4.17.12:
+  version "4.17.12"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.12.tgz#a712c74fdc31f7ecb20fe44f157d802d208097ef"
+  integrity sha512-+CiwtLnsJhX03p20mwXuvhoebatoh5B3tt+VvYlrPgZC1g36y+RRbkufX95Xa+X4I59aWEacDFYwnJZiyBh9gA==
+
+lodash@^4.17.4, lodash@^4.2.0:
   version "4.17.4"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
