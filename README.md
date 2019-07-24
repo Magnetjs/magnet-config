@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/Magnetjs/magnet-config.svg?branch=master)](https://travis-ci.org/Magnetjs/magnet-config)
 
 # What it does
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Magnetjs/magnet-config.svg)](https://greenkeeper.io/)
 Compose all js files under server/config and expose it via app.config.
 
 # Config structure
