@@ -24,7 +24,7 @@
     "watch-test": "ava --watch | tap-spec"
   },
   "dependencies": {
-    "bluebird": "^3.4.7",
+    "bluebird": "^3.7.0",
     "is-promise": "^2.1.0",
     "lodash": "^4.13.1",
     "magnet-core": "^3.3.1",
