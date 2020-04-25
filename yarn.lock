@@ -1472,6 +1472,11 @@ is-promise@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/is-promise/-/is-promise-2.1.0.tgz#79a2a9ece7f096e80f36d2b2f3bc16c1ff4bf3fa"
 
+is-promise@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/is-promise/-/is-promise-2.2.0.tgz#3ebfc546cee7064c314686279cc9df7bc2724715"
+  integrity sha512-N/4ZxZGjDLAWJQNtcq1/5AOiWTAAhDwnjlaGPaC2+p3pQ+Ka2Dl/EL29DppuoiZ8Xr1/p/9ywBGGzHRPoWKfGA==
+
 is-redirect@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-redirect/-/is-redirect-1.0.0.tgz#1d03dded53bd8db0f30c26e4f95d36fc7c87dc24"
